@@ -1,0 +1,77 @@
+<dom-module id="actindo-wizzard-step">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            strong {
+                display: block;
+                margin-bottom: 1em;
+            }
+        </style>
+
+        <strong>[[label]]</strong>
+        <slot></slot>
+    </template>
+
+    <script>
+        class ActindoWizzardStep extends Polymer.Element {
+            static get is() { return 'actindo-wizzard-step'; }
+
+            static get properties() {
+                return {
+                    /**
+                     * indicates if this step is disabled. Disabled step's cannot be selected.
+                     *
+                     * @type {Boolean}
+                     */
+                    disabled: {
+                        type: Boolean,
+                        value: false
+                    },
+
+                    /**
+                     * the label of this step
+                     *
+                     * @type {String}
+                     */
+                    label: {
+                        type: String
+                    },
+
+                    /**
+                     * If this is the case, this steps state will be cleared (reset to an empty object) if the user
+                     * decides to jump to any step BEFORE this one (NOT if the user jumps to THIS step)
+                     *
+                     * @type {Boolean}
+                     */
+                    dependsOnPreviousStep: {
+                        type: Boolean,
+                        value: false
+                    },
+
+                    /**
+                     * the state data of this step. May be reset to an empty object from the wizzard if the user decides
+                     * to jump back some steps which may invalidate the states in between.
+                     * This is also explicitely set to an empty object when the wizzard is initialising or reset
+                     *
+                     * @see dependsOnPreviousStep
+                     *
+                     * @type {{}}
+                     */
+                    state: {
+                        type: Object,
+                        notify: true
+                    }
+                };
+            }
+
+            clearState() {
+                this.state = {};
+            }
+        }
+
+        customElements.define(ActindoWizzardStep.is, ActindoWizzardStep);
+    </script>
+</dom-module>

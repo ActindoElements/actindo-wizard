@@ -1,0 +1,655 @@
+<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="./actindo-wizzard-step.html">
+
+<dom-module id="actindo-wizzard">
+    <template>
+        <style>
+            :host {
+                background: rgba(0, 0, 0, 0.5);
+                bottom: 0;
+                display: none;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+
+                --highlight-color: var(--primary-color);
+                --decent-color: var(--primary-text-color);
+            }
+
+            :host([open]) {
+                display: block;
+            }
+
+            paper-card {
+                display: block;
+                margin: 2em;
+                padding: 0.5em;
+            }
+
+            .actions {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            #steps {
+                align-items: center;
+                bottom: 0.7em;
+                flex-direction: column;
+                display: flex;
+                justify-content: center;
+                overflow: hidden;
+                position: relative;
+            }
+            #steps p {
+                color: var(--primary-color);
+                font-size: small;
+                margin: 0;
+                overflow: hidden;
+                text-align: center;
+                text-overflow: ellipsis;
+                width: 100%;
+                white-space: nowrap;
+            }
+            #steps p strong {
+                text-transform: uppercase;
+            }
+            #steps ul {
+                margin: 0;
+                padding: 0.4em 0 0 0;
+                user-select: none;
+            }
+            #steps .step {
+                background: transparent;
+                border-radius: 1em;
+                display: inline-block;
+                height: 24px;
+                margin-left: 11px;
+                position: relative;
+                width: 24px;
+            }
+            #steps .step:before {
+                border-radius: 1em;
+                content: "";
+                display: inline-block;
+                height: 12px;
+                left: 6px;
+                position: absolute;
+                top: 6px;
+                width: 12px;
+            }
+            #steps .step:after {
+                content: "";
+                display: inline-block;
+                height: 2px;
+                left: 21px;
+                position: absolute;
+                top: 11px;
+                width: 20px;
+            }
+            #steps .step:first-child {
+                margin: 0;
+            }
+            #steps .step:last-of-type:after {
+                display: none;
+            }
+            .step.jump-true {
+                cursor: pointer;
+            }
+            #steps .stepSpacer {
+                display: inline-block;
+            }
+
+            #actions {
+                margin-top: 1em;
+            }
+
+            #actions.two-line {
+                flex-wrap: wrap;
+            }
+            #actions.two-line #steps {
+                flex-basis: 100%;
+                order: -1;
+            }
+            #steps .step:before,
+            #steps .step:after {
+                background: var(--decent-color);
+                opacity: 0.3;
+            }
+            #steps .step.disabled-true:before {
+                background: transparent;
+                border: 2px solid var(--decent-color);
+                height: 8px;
+                width: 8px;
+                top: 6px;
+            }
+            #steps .step.active-true:before {
+                background: var(--highlight-color);
+                opacity: 1;
+            }
+            #steps .step.done-true:before {
+                background: var(--highlight-color);
+            }
+            #steps .step.disabled-true.done-true:before {
+                background: transparent;
+                border-color: var(--highlight-color);
+            }
+            #steps .step.done-true:after {
+                background: var(--highlight-color);
+            }
+
+            #continueButton {
+                @apply(--paper-save-button);
+            }
+
+            #confirmStateClearDialog {
+                min-width: 320px;
+                max-width: 600px;
+                width: 50vw;
+            }
+            #confirmStateClearDialog ul {
+                margin-left: 1em;
+            }
+            #confirmStateClearDialog paper-button[dialog-confirm] {
+                @apply(--paper-save-button);
+            }
+            #back paper-button[hidden] {
+                display: inline-block !important;
+                opacity: 0;
+            }
+        </style>
+
+        <paper-card>
+            <iron-pages selected="[[currentStep]]">
+                <slot></slot>
+            </iron-pages>
+            <div class="actions" id="actions">
+                <div id="back"><paper-button on-tap="back" hidden="[[!_canGoBack(currentStep)]]">Zurück</paper-button></div>
+                <div id="steps">
+                    <ul>
+                        <template is="dom-repeat" items="[[steps]]" observe="disabled">
+                            <li class$="step done-[[_isStepDone(index, currentStep)]] active-[[_isStepActive(index, currentStep)]] disabled-[[item.disabled]] jump-[[_canJumpToStep(index, currentStep)]]"
+                                title$="Schritt [[_getStepNumberFromIndex(index)]]: [[item.label]]"
+                                on-tap="_jumpToState">
+                                <paper-ripple center noink="[[!_canJumpToStep(index, currentStep)]]"></paper-ripple>
+                            </li>
+                        </template>
+                    </ul>
+                    <p><strong>Schritt [[_getStepNumberFromIndex(currentStep)]]:</strong> [[_getStepLabel(currentStep)]]</p>
+                </div>
+                <div id="for">
+                    <paper-button on-tap="cancel">Abbrechen</paper-button>
+                    <paper-button id="continueButton" raised on-tap="continue" disabled="[[disableContinue]]">[[_getNextStepButtonLabel(currentStep)]]</paper-button>
+                </div>
+            </div>
+        </paper-card>
+
+        <paper-dialog id="confirmStateClearDialog">
+            <p>
+                Um zu diesem Schritt zurück zu kehren, werden die Daten folgender Schritte wieder zurückgesetzt und müssen
+                neu konfiguriert werden:
+            </p>
+            <ul>
+                <template is="dom-repeat" items="[[_pendingStateClears]]">
+                    <li>Schritt [[item.number]]: [[item.step.label]]</li>
+                </template>
+            </ul>
+            <div class="actions">
+                <paper-button dialog-dismiss>Abbrechen</paper-button>
+                <paper-button dialog-confirm autofocus on-tap="_clearPendingStates">OK</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+        /**
+         * # actindo-wizzard
+         * `<actindo-wizzard>` implements an abstract application wizzard that guides users through a process
+         * of multiple steps. The content of the steps is up to you. The wizzard takes care of the surrounding optics
+         * and the state handling.
+         *
+         * ## Basic Usage
+         * ```
+         * <actindo-wizzard>
+         *     <actindo-wizzard-step label="Select type" state="{{s1}}"><your-type-select state="{{s1}}"></your-type-select></actindo-wizzard-step>
+         *     <actindo-wizzard-step label="Configure source" depends-on-previous-step state="{{s2}}"><your-source-configure state="{{s2}}"></your-source-configure></actindo-wizzard-step>
+         *     <actindo-wizzard-step label="select data" state="{{s3}}"><your-select-data state="{{s3}}"></your-select-data></actindo-wizzard-step>
+         *     <actindo-wizzard-step label="Confirm import" depends-on-previous-step data="{{s4}}"><your-confirm-import data="{{s4}}"></your-confirm-import></actindo-wizzard-step>
+         * </actindo-wizzard>
+         * ```
+         *
+         * ## Styline
+         * `<actindo-wizzard>` exposes the following variables for styling
+         * ```
+         * variable             |  default             | description
+         * ---------------------|----------------------|---------------
+         * --highlight-color    | --primary-color      | colors of active points of the pagination
+         * --decent-color       | --primary-text-color | colors of disabled points of the pagination
+         *```
+         *
+         * @customElement
+         * @polymer
+         */
+        class ActindoWizzard extends Polymer.Element {
+            static get is() { return 'actindo-wizzard'; }
+
+            static get properties() {
+                return {
+                    /**
+                     * if we jump back to previous steps which would result in step states being cleared, should we
+                     * have the user confirm this before actually doing it?
+                     *
+                     * @type {Boolean}
+                     */
+                    askBeforeClearState: {
+                        type: Boolean,
+                        value: true
+                    },
+
+                    /**
+                     * contains the currently active step
+                     *
+                     * @type {Number}
+                     */
+                    currentStep: {
+                        type: Number,
+                        value: -1,
+                        notify: true,
+                        readOnly: true
+                    },
+
+                    /**
+                     * whether to disable the continue button. May be useful to force user input
+                     *
+                     * @param {Boolean}
+                     */
+                    disableContinue: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    },
+
+                    /**
+                     * indicates if the wizzard is open
+                     *
+                     * @type {Boolean}
+                     */
+                    open: {
+                        type: Boolean,
+                        notify: true,
+                        value: false,
+                        reflectToAttribute: true
+                    },
+
+                    /**
+                     * all steps (<actindo-wizzard-step>s) contained in this wizzard
+                     *
+                     * @type {[]}
+                     */
+                    steps: {
+                        type: Array,
+                        readOnly: true
+                    },
+
+                    /**
+                     * if we want to go back to previous steps and require states to cleared and we need the users
+                     * consent to do so, the states we want to clear caches from are in here
+                     *
+                     * @private
+                     * @type {Array}
+                     */
+                    _pendingStateClears: {
+                        type: Array
+                    },
+
+                    /**
+                     * if we want to go back to previous steps and require states to be cleared and we need the users
+                     * consent to do so, this contains the index of the step we need to go to after getting the users
+                     * consent
+                     *
+                     * @private
+                     * @type {Number}
+                     */
+                    _pendingGoTo: {
+                        type: Number
+                    }
+
+                    /**
+                     * @event cancel Fired when `actindo-wizzard` is canceled
+                     * @param {number} currentStep the index of the current step
+                     */
+
+                    /**
+                     * @event finished Fired when `actindo-wizzard` is finished (all steps done)
+                     * @param {Array<Object>} states the state of all steps
+                     */
+                };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+
+                this.reset();
+
+                // init resize handling
+                this._resizeDebounce = 0;
+                this._resizeDebounceHandler = () => {
+                    window.clearTimeout(this._resizeDebounce);
+                    this._resizeDebounce = window.setTimeout(() => {
+                        this._onResize();
+                    }, 100);
+                };
+                window.addEventListener('resize', this._resizeDebounceHandler);
+                this._onResize();
+
+                console.log(this.steps);
+            }
+
+            disconnectedCallback() {
+                window.removeEventListener('resize', this._resizeDebounceHandler);
+            }
+
+
+
+            /*
+             * interface
+             */
+
+            /**
+             * goes back to the first previous step (before the current one) that is not disabled
+             */
+            back() {
+                for(let i = this.currentStep - 1; i >=0; i--)
+                {
+                    if(this.steps[i].disabled !== true)
+                    {
+                        this.goToStep(i, false);
+                        return;
+                    }
+                }
+            }
+
+            /**
+             * closes the wizzard (unless the event is prevented) and reset it.
+             * This is called when the user taps the "cancel" button
+             */
+            cancel() {
+                let cancelEvent = new CustomEvent('cancel', {
+                    cancelable: true,
+                    detail: {currentStep: this.currentStep}
+                });
+                this.dispatchEvent(cancelEvent);
+
+                if(!cancelEvent.defaultPrevented)
+                {
+                    this.open = false;
+                    this.reset();
+                }
+            }
+
+            /**
+             * goes forward one step
+             */
+            continue() {
+                for(let i = this.currentStep + 1, c = this.steps.length; i < c; i++)
+                {
+                    if(this.steps[i].disabled !== true)
+                    {
+                        this._setCurrentStep(i, false);
+                        return;
+                    }
+                }
+
+                // can't go any further? Then we're done!
+                this.dispatchEvent(new CustomEvent('finished', {
+                    detail: {
+                        states: this.getStates()
+                    }
+                }));
+                this.open = false;
+            }
+
+            /**
+             * returns the state of the given step
+             *
+             * @param {Number} stepIndex the index of the step to get the state for
+             * @return {{}}
+             */
+            getState(stepIndex) {
+                if(stepIndex < 0 || this.steps.length <= stepIndex)
+                {
+                    // invalid index
+                    throw new RangeError('invalid wizzard step provided: ' + index);
+                }
+
+                return this.steps[stepIndex].state;
+            }
+
+            /**
+             * returns the state of all steps
+             *
+             * @return {Array<Object>}
+             */
+            getStates() {
+                let states = [];
+                for(let i = 0, c = this.steps.length; i < c; i++)
+                {
+                    states.push(this.getState(i));
+                }
+
+                return states;
+            }
+
+            /**
+             * Goes to the given step. While doing this, we may have to clear states. If we're configured to ask the user
+             * to confirm these state clears, a dialog is opened to get that user consent; otherwise the states are just cleared
+             * for the steps that are dependent on their previous steps
+             *
+             * @param {Number} index the index of the step to jump to
+             * @param {Boolean} userConsent if we have the users confirmation to clear states when jumping back and clearing states in the process
+             */
+            goToStep(index, userConsent) {
+                if(index < 0 || this.steps.length <= index)
+                {
+                    // invalid index
+                    throw new RangeError('invalid wizzard step provided: ' + index);
+                }
+
+                if(this.steps[index].disabled)
+                {
+                    console.warn('requested step is disabled and can therefor not be selected');
+                    return;
+                }
+
+                // if we're going back: walk backwards through the steps and check if we need to clear states
+                this._pendingStateClears = [];
+                if(index < this.currentStep)
+                {
+                    for(let i = this.currentStep; i > index; i--) {
+                        if(this.steps[i].dependsOnPreviousStep && JSON.stringify(this.steps[i].state) !== '{}')
+                        {
+                            // yes we need to clear
+                            // @todo should we skip this for disabled steps?
+                            if(userConsent || !this.askBeforeClearState)
+                            {
+                                this.steps[i].clearState();
+                            }
+                            else
+                            {
+                                // if we have no user consent yet, get it
+                                this.push('_pendingStateClears', {number: i + 1, step: this.steps[i]});
+                            }
+                        }
+                    }
+                }
+
+                if(this._pendingStateClears.length > 0) {
+                    this._pendingStateClears.reverse();
+                    this.$.confirmStateClearDialog.open();
+                    this._pendingGoTo = index;
+                    return;
+                }
+
+                this._setCurrentStep(index);
+            }
+
+            /**
+             * clears all states and returns to the first step
+             */
+            reset() {
+                this._setSteps(
+                    this.shadowRoot
+                        .querySelector('slot')
+                        .assignedNodes({flatten:true})
+                        .filter(step => {
+                            if(step.nodeType !== Node.ELEMENT_NODE) {
+                                return false;
+                            }
+                            if(step.tagName.toLowerCase() !== 'actindo-wizzard-step')
+                            {
+                                console.warn('Only instances of <actindo-wizzard-step> may be put into <actindo-wizzard>, removing element', step);
+                                step.parentElement.removeChild(step);
+                                return false;
+                            }
+
+                            step.clearState();
+                            return true;
+                        })
+                );
+
+                // go to first (available) step
+                this._setCurrentStep(-1);
+                this.continue();
+            }
+
+            /**
+             * changes the disabled field of the given step
+             *
+             * @param {number} index the index of the step to change
+             * @param {boolean} enabled whether to enable or disable the step
+             */
+            setStepEnabled(index, enabled) {
+                if(!enabled && index === this.currentStep)
+                {
+                    throw new Error('current step can not be disabled');
+                }
+
+                this.set('steps.' + index + '.disabled', !enabled);
+            }
+
+
+
+            /*
+             * internal helpers
+             */
+
+            _clearPendingStates() {
+                if(Array.isArray(this._pendingStateClears))
+                {
+                    for(let i = 0, c = this._pendingStateClears.length; i < c; i++)
+                    {
+                        this._pendingStateClears[i].step.clearState();
+                    }
+                }
+
+                if(typeof this._pendingGoTo === 'number')
+                {
+                    this.goToStep(this._pendingGoTo, true);
+                }
+            }
+
+            _onResize() {
+                this.$.actions.classList.remove('two-line');
+                if(this.$.actions.clientHeight > 60)
+                {
+                    this.$.actions.classList.add('two-line');
+                }
+            }
+
+            _jumpToState(e) {
+                if(this._canJumpToStep(e.model.index) && e.model.index !== this.currentStep)
+                {
+                    this.goToStep(e.model.index);
+                }
+            }
+
+
+
+            /*
+             * template helpers
+             */
+
+            _canGoBack(currentStep) {
+                if(!this.steps)
+                {
+                    return;
+                }
+
+                for(let i = currentStep - 1; i >=0; i--)
+                {
+                    if(this.steps[i].disabled !== true)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            _canJumpToStep(index) {
+                if(index < this.currentStep) {
+                    return !this.steps[index].disabled;
+                }
+
+                if(this.steps[index].disabled)
+                {
+                    return false;
+                }
+
+                for(let i = this.currentStep + 1; i <= index; i++)
+                {
+                    if((this.steps[i].disabled && !this.steps[i].dependsOnPreviousStep) || (!this.steps[i].disabled && this.steps[i].dependsOnPreviousStep))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            _getStepLabel(index) {
+                try {
+                    return this.steps[index].label;
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            _getNextStepButtonLabel(currentStep) {
+                if(this.steps && currentStep === this.steps.length - 1)
+                {
+                    return 'Abschließen';
+                }
+
+                return 'Weiter';
+            }
+
+            _getStepNumberFromIndex(index) {
+                return index + 1;
+            }
+
+            _isStepActive(index, currentStep) {
+                return currentStep === index;
+            }
+
+            _isStepDone(index, currentStep) {
+                return currentStep > index;
+            }
+        }
+
+        customElements.define(ActindoWizzard.is, ActindoWizzard);
+    </script>
+</dom-module>

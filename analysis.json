@@ -1,0 +1,942 @@
+{
+  "schema_version": "1.0.0",
+  "elements": [
+    {
+      "description": "",
+      "summary": "",
+      "path": "actindo-wizzard-step.html",
+      "properties": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "description": "indicates if this step is disabled. Disabled step's cannot be selected.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 28,
+              "column": 20
+            },
+            "end": {
+              "line": 31,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "description": "the label of this step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 38,
+              "column": 20
+            },
+            "end": {
+              "line": 40,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "dependsOnPreviousStep",
+          "type": "boolean",
+          "description": "If this is the case, this steps state will be cleared (reset to an empty object) if the user\ndecides to jump to any step BEFORE this one (NOT if the user jumps to THIS step)",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 48,
+              "column": 20
+            },
+            "end": {
+              "line": 51,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "state",
+          "type": "{}",
+          "description": "the state data of this step. May be reset to an empty object from the wizzard if the user decides\nto jump back some steps which may invalidate the states in between.\nThis is also explicitely set to an empty object when the wizzard is initialising or reset",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 62,
+              "column": 20
+            },
+            "end": {
+              "line": 65,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true
+            }
+          }
+        }
+      ],
+      "methods": [
+        {
+          "name": "clearState",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 69,
+              "column": 12
+            },
+            "end": {
+              "line": 71,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 18,
+          "column": 8
+        },
+        "end": {
+          "line": 72,
+          "column": 9
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "name": "ActindoWizzardStep",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "indicates if this step is disabled. Disabled step's cannot be selected.",
+          "sourceRange": {
+            "start": {
+              "line": 28,
+              "column": 20
+            },
+            "end": {
+              "line": 31,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "label",
+          "description": "the label of this step",
+          "sourceRange": {
+            "start": {
+              "line": 38,
+              "column": 20
+            },
+            "end": {
+              "line": 40,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "depends-on-previous-step",
+          "description": "If this is the case, this steps state will be cleared (reset to an empty object) if the user\ndecides to jump to any step BEFORE this one (NOT if the user jumps to THIS step)",
+          "sourceRange": {
+            "start": {
+              "line": 48,
+              "column": 20
+            },
+            "end": {
+              "line": 51,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "state",
+          "description": "the state data of this step. May be reset to an empty object from the wizzard if the user decides\nto jump back some steps which may invalidate the states in between.\nThis is also explicitely set to an empty object when the wizzard is initialising or reset",
+          "sourceRange": {
+            "start": {
+              "line": 62,
+              "column": 20
+            },
+            "end": {
+              "line": 65,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "{}"
+        }
+      ],
+      "events": [
+        {
+          "type": "CustomEvent",
+          "name": "state-changed",
+          "description": "Fired when the `state` property changes.",
+          "metadata": {}
+        }
+      ],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [
+        {
+          "description": "",
+          "name": "",
+          "range": {
+            "file": "actindo-wizzard-step.html",
+            "start": {
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "line": 14,
+              "column": 21
+            }
+          }
+        }
+      ],
+      "tagname": "actindo-wizzard-step"
+    },
+    {
+      "description": "# actindo-wizzard\n`<actindo-wizzard>` implements an abstract application wizzard that guides users through a process\nof multiple steps. The content of the steps is up to you. The wizzard takes care of the surrounding optics\nand the state handling.\n\n## Basic Usage\n```\n<actindo-wizzard>\n    <actindo-wizzard-step label=\"Select type\" state=\"{{s1}}\"><your-type-select state=\"{{s1}}\"></your-type-select></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"Configure source\" depends-on-previous-step state=\"{{s2}}\"><your-source-configure state=\"{{s2}}\"></your-source-configure></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"select data\" state=\"{{s3}}\"><your-select-data state=\"{{s3}}\"></your-select-data></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"Confirm import\" depends-on-previous-step data=\"{{s4}}\"><your-confirm-import data=\"{{s4}}\"></your-confirm-import></actindo-wizzard-step>\n</actindo-wizzard>\n```\n\n## Styline\n`<actindo-wizzard>` exposes the following variables for styling\n```\nvariable             |  default             | description\n---------------------|----------------------|---------------\n--highlight-color    | --primary-color      | colors of active points of the pagination\n--decent-color       | --primary-text-color | colors of disabled points of the pagination\n```",
+      "summary": "",
+      "path": "actindo-wizzard.html",
+      "properties": [
+        {
+          "name": "askBeforeClearState",
+          "type": "boolean",
+          "description": "if we jump back to previous steps which would result in step states being cleared, should we\nhave the user confirm this before actually doing it?",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 247,
+              "column": 20
+            },
+            "end": {
+              "line": 250,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "true"
+        },
+        {
+          "name": "currentStep",
+          "type": "number",
+          "description": "contains the currently active step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 257,
+              "column": 20
+            },
+            "end": {
+              "line": 262,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true,
+              "readOnly": true
+            }
+          },
+          "defaultValue": "-1"
+        },
+        {
+          "name": "disableContinue",
+          "type": "boolean",
+          "description": "whether to disable the continue button. May be useful to force user input",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 269,
+              "column": 20
+            },
+            "end": {
+              "line": 273,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true
+            }
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "description": "indicates if the wizzard is open",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 280,
+              "column": 20
+            },
+            "end": {
+              "line": 285,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true
+            }
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "steps",
+          "type": "[]",
+          "description": "all steps (<actindo-wizzard-step>s) contained in this wizzard",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 292,
+              "column": 20
+            },
+            "end": {
+              "line": 295,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "name": "_pendingStateClears",
+          "type": "Array",
+          "description": "if we want to go back to previous steps and require states to cleared and we need the users\nconsent to do so, the states we want to clear caches from are in here",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 304,
+              "column": 20
+            },
+            "end": {
+              "line": 306,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        },
+        {
+          "name": "_pendingGoTo",
+          "type": "number",
+          "description": "if we want to go back to previous steps and require states to be cleared and we need the users\nconsent to do so, this contains the index of the step we need to go to after getting the users\nconsent",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 316,
+              "column": 20
+            },
+            "end": {
+              "line": 318,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          }
+        }
+      ],
+      "methods": [
+        {
+          "name": "connectedCallback",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 332,
+              "column": 12
+            },
+            "end": {
+              "line": 349,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "disconnectedCallback",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 351,
+              "column": 12
+            },
+            "end": {
+              "line": 353,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "back",
+          "description": "goes back to the first previous step (before the current one) that is not disabled",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 364,
+              "column": 12
+            },
+            "end": {
+              "line": 373,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "cancel",
+          "description": "closes the wizzard (unless the event is prevented) and reset it.\nThis is called when the user taps the \"cancel\" button",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 379,
+              "column": 12
+            },
+            "end": {
+              "line": 391,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "continue",
+          "description": "goes forward one step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 396,
+              "column": 12
+            },
+            "end": {
+              "line": 413,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "getState",
+          "description": "returns the state of the given step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 421,
+              "column": 12
+            },
+            "end": {
+              "line": 429,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "stepIndex",
+              "type": "Number",
+              "description": "the index of the step to get the state for"
+            }
+          ],
+          "return": {
+            "type": "{}"
+          }
+        },
+        {
+          "name": "getStates",
+          "description": "returns the state of all steps",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 436,
+              "column": 12
+            },
+            "end": {
+              "line": 444,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "Array.<Object>"
+          }
+        },
+        {
+          "name": "goToStep",
+          "description": "Goes to the given step. While doing this, we may have to clear states. If we're configured to ask the user\nto confirm these state clears, a dialog is opened to get that user consent; otherwise the states are just cleared\nfor the steps that are dependent on their previous steps",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 454,
+              "column": 12
+            },
+            "end": {
+              "line": 497,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index",
+              "type": "Number",
+              "description": "the index of the step to jump to"
+            },
+            {
+              "name": "userConsent",
+              "type": "Boolean",
+              "description": "if we have the users confirmation to clear states when jumping back and clearing states in the process"
+            }
+          ]
+        },
+        {
+          "name": "reset",
+          "description": "clears all states and returns to the first step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 502,
+              "column": 12
+            },
+            "end": {
+              "line": 526,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "setStepEnabled",
+          "description": "changes the disabled field of the given step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 534,
+              "column": 12
+            },
+            "end": {
+              "line": 541,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index",
+              "type": "number",
+              "description": "the index of the step to change"
+            },
+            {
+              "name": "enabled",
+              "type": "boolean",
+              "description": "whether to enable or disable the step"
+            }
+          ]
+        },
+        {
+          "name": "_clearPendingStates",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 549,
+              "column": 12
+            },
+            "end": {
+              "line": 562,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_onResize",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 564,
+              "column": 12
+            },
+            "end": {
+              "line": 570,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_jumpToState",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 572,
+              "column": 12
+            },
+            "end": {
+              "line": 577,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "e"
+            }
+          ]
+        },
+        {
+          "name": "_canGoBack",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 585,
+              "column": 12
+            },
+            "end": {
+              "line": 599,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "currentStep"
+            }
+          ]
+        },
+        {
+          "name": "_canJumpToStep",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 601,
+              "column": 12
+            },
+            "end": {
+              "line": 620,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "name": "_getStepLabel",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 622,
+              "column": 12
+            },
+            "end": {
+              "line": 628,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "name": "_getNextStepButtonLabel",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 630,
+              "column": 12
+            },
+            "end": {
+              "line": 637,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "currentStep"
+            }
+          ]
+        },
+        {
+          "name": "_getStepNumberFromIndex",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 639,
+              "column": 12
+            },
+            "end": {
+              "line": 641,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "name": "_isStepActive",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 643,
+              "column": 12
+            },
+            "end": {
+              "line": 645,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index"
+            },
+            {
+              "name": "currentStep"
+            }
+          ]
+        },
+        {
+          "name": "_isStepDone",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 647,
+              "column": 12
+            },
+            "end": {
+              "line": 649,
+              "column": 13
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "index"
+            },
+            {
+              "name": "currentStep"
+            }
+          ]
+        }
+      ],
+      "staticMethods": [],
+      "demos": [],
+      "metadata": {},
+      "sourceRange": {
+        "start": {
+          "line": 236,
+          "column": 8
+        },
+        "end": {
+          "line": 650,
+          "column": 9
+        }
+      },
+      "privacy": "public",
+      "superclass": "HTMLElement",
+      "name": "ActindoWizzard",
+      "attributes": [
+        {
+          "name": "ask-before-clear-state",
+          "description": "if we jump back to previous steps which would result in step states being cleared, should we\nhave the user confirm this before actually doing it?",
+          "sourceRange": {
+            "start": {
+              "line": 247,
+              "column": 20
+            },
+            "end": {
+              "line": 250,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "current-step",
+          "description": "contains the currently active step",
+          "sourceRange": {
+            "start": {
+              "line": 257,
+              "column": 20
+            },
+            "end": {
+              "line": 262,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "disable-continue",
+          "description": "whether to disable the continue button. May be useful to force user input",
+          "sourceRange": {
+            "start": {
+              "line": 269,
+              "column": 20
+            },
+            "end": {
+              "line": 273,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "open",
+          "description": "indicates if the wizzard is open",
+          "sourceRange": {
+            "start": {
+              "line": 280,
+              "column": 20
+            },
+            "end": {
+              "line": 285,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "steps",
+          "description": "all steps (<actindo-wizzard-step>s) contained in this wizzard",
+          "sourceRange": {
+            "start": {
+              "line": 292,
+              "column": 20
+            },
+            "end": {
+              "line": 295,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "[]"
+        }
+      ],
+      "events": [
+        {
+          "type": "CustomEvent",
+          "name": "cancel",
+          "description": "cancel Fired when `actindo-wizzard` is canceled",
+          "metadata": {}
+        },
+        {
+          "type": "CustomEvent",
+          "name": "finished",
+          "description": "finished Fired when `actindo-wizzard` is finished (all steps done)",
+          "metadata": {}
+        },
+        {
+          "type": "CustomEvent",
+          "name": "current-step-changed",
+          "description": "Fired when the `currentStep` property changes.",
+          "metadata": {}
+        },
+        {
+          "type": "CustomEvent",
+          "name": "disable-continue-changed",
+          "description": "Fired when the `disableContinue` property changes.",
+          "metadata": {}
+        },
+        {
+          "type": "CustomEvent",
+          "name": "open-changed",
+          "description": "Fired when the `open` property changes.",
+          "metadata": {}
+        }
+      ],
+      "styling": {
+        "cssVariables": [],
+        "selectors": []
+      },
+      "slots": [
+        {
+          "description": "",
+          "name": "",
+          "range": {
+            "file": "actindo-wizzard.html",
+            "start": {
+              "line": 167,
+              "column": 16
+            },
+            "end": {
+              "line": 167,
+              "column": 29
+            }
+          }
+        }
+      ],
+      "tagname": "actindo-wizzard"
+    }
+  ]
+}
