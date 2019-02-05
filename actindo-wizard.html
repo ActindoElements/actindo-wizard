@@ -184,7 +184,7 @@
                 <slot></slot>
             </iron-pages>
             <div class="actions" id="actions">
-                <div id="back"><paper-button on-tap="back" class$="hidden-[[!_canGoBack(currentStep)]]"><iron-icon icon="chevron-left"></iron-icon>Zurück</paper-button></div>
+                <div id="back"><paper-button on-tap="back" class$="hidden-[[!_canGoBack(currentStep)]]"><iron-icon icon="chevron-left"></iron-icon>[[backLabel]]</paper-button></div>
                 <div id="steps">
                     <ul>
                         <template is="dom-repeat" items="[[steps]]" observe="disabled">
@@ -198,8 +198,8 @@
                     <p><strong>Schritt [[_getStepNumberFromIndex(currentStep)]]:</strong> [[_getStepLabel(currentStep)]]</p>
                 </div>
                 <div id="for">
-                    <paper-button on-tap="cancel">Abbrechen</paper-button>
-                    <paper-button id="continueButton" raised on-tap="continue" disabled="[[disableContinue]]">[[_getNextStepButtonLabel(currentStep)]]</paper-button>
+                    <paper-button on-tap="cancel" disabled="[[disableCancel]]">[[cancelLabel]]</paper-button>
+                    <paper-button id="continueButton" raised on-tap="continue" disabled="[[disableContinue]]">[[_getNextStepButtonLabel(currentStep, continueLabel, finishLabel)]]</paper-button>
                 </div>
             </div>
         </paper-card>
@@ -211,7 +211,7 @@
             </p>
             <ul>
                 <template is="dom-repeat" items="[[_pendingStateClears]]">
-                    <li>Schritt [[item.number]]: [[item.step.label]]</li>
+                    <li>[[stepLabel]] [[item.number]]: [[item.step.label]]</li>
                 </template>
             </ul>
             <div class="actions">
@@ -223,23 +223,23 @@
 
     <script>
         /**
-         * # actindo-wizzard
-         * `<actindo-wizzard>` implements an abstract application wizzard that guides users through a process
-         * of multiple steps. The content of the steps is up to you. The wizzard takes care of the surrounding optics
+         * # actindo-wizard
+         * `<actindo-wizard>` implements an abstract application wizard that guides users through a process
+         * of multiple steps. The content of the steps is up to you. The wizard takes care of the surrounding optics
          * and the state handling.
          *
          * ## Basic Usage
          * ```
-         * <actindo-wizzard>
-         *     <actindo-wizzard-step label="Select type" state="{{s1}}"><your-type-select state="{{s1}}"></your-type-select></actindo-wizzard-step>
-         *     <actindo-wizzard-step label="Configure source" depends-on-previous-step state="{{s2}}"><your-source-configure state="{{s2}}"></your-source-configure></actindo-wizzard-step>
-         *     <actindo-wizzard-step label="select data" state="{{s3}}"><your-select-data state="{{s3}}"></your-select-data></actindo-wizzard-step>
-         *     <actindo-wizzard-step label="Confirm import" depends-on-previous-step data="{{s4}}"><your-confirm-import data="{{s4}}"></your-confirm-import></actindo-wizzard-step>
-         * </actindo-wizzard>
+         * <actindo-wizard>
+         *     <actindo-wizard-step label="Select type" state="{{s1}}"><your-type-select state="{{s1}}"></your-type-select></actindo-wizard-step>
+         *     <actindo-wizard-step label="Configure source" depends-on-previous-step state="{{s2}}"><your-source-configure state="{{s2}}"></your-source-configure></actindo-wizard-step>
+         *     <actindo-wizard-step label="select data" state="{{s3}}"><your-select-data state="{{s3}}"></your-select-data></actindo-wizard-step>
+         *     <actindo-wizard-step label="Confirm import" depends-on-previous-step data="{{s4}}"><your-confirm-import data="{{s4}}"></your-confirm-import></actindo-wizard-step>
+         * </actindo-wizard>
          * ```
          *
          * ## Styline
-         * `<actindo-wizzard>` exposes the following variables for styling
+         * `<actindo-wizard>` exposes the following variables for styling
          * ```
          * variable             |  default             | description
          * ---------------------|----------------------|---------------
@@ -250,11 +250,16 @@
          * @customElement
          * @polymer
          */
-        class ActindoWizzard extends Polymer.Element {
+        class ActindoWizard extends Polymer.Element {
             static get is() { return 'actindo-wizard'; }
 
             static get properties() {
                 return {
+                    disableCancel: {
+                        type: Boolean,
+                        value: false
+                    },
+
                     /**
                      * if we jump back to previous steps which would result in step states being cleared, should we
                      * have the user confirm this before actually doing it?
@@ -279,6 +284,46 @@
                     },
 
                     /**
+                     * the label of the back button (to go back to the previous step)
+                     */
+                    backLabel: {
+                        type: String,
+                        value: 'back'
+                    },
+
+                    /**
+                     * the label of the cancel button that closes the wizard without finishing it
+                     */
+                    cancelLabel: {
+                        type: String,
+                        value: 'Cancel'
+                    },
+
+                    /**
+                     * the label of the continue button (to get to the next step)
+                     */
+                    continueLabel: {
+                        type: String,
+                        value: 'Continue'
+                    },
+
+                    /**
+                     * the label of the continue button in the last step
+                     */
+                    finishLabel: {
+                        type: String,
+                        value: 'Finalize'
+                    },
+
+                    /**
+                     * the label to show before the step number and label
+                     */
+                    stepLabel: {
+                        type: String,
+                        value: 'Step'
+                    },
+
+                    /**
                      * whether to disable the continue button. May be useful to force user input
                      *
                      * @param {Boolean}
@@ -290,7 +335,7 @@
                     },
 
                     /**
-                     * indicates if the wizzard is open
+                     * indicates if the wizard is open
                      *
                      * @type {Boolean}
                      */
@@ -302,7 +347,7 @@
                     },
 
                     /**
-                     * all steps (<actindo-wizzard-step>s) contained in this wizzard
+                     * all steps (<actindo-wizard-step>s) contained in this wizard
                      *
                      * @type {[]}
                      */
@@ -335,12 +380,12 @@
                     }
 
                     /**
-                     * @event cancel Fired when `actindo-wizzard` is canceled
+                     * @event cancel Fired when `actindo-wizard` is canceled
                      * @param {number} currentStep the index of the current step
                      */
 
                     /**
-                     * @event finished Fired when `actindo-wizzard` is finished (all steps done)
+                     * @event finished Fired when `actindo-wizard` is finished (all steps done)
                      * @param {Array<Object>} states the state of all steps
                      */
                 };
@@ -388,7 +433,7 @@
             }
 
             /**
-             * closes the wizzard (unless the event is prevented) and reset it.
+             * closes the wizard (unless the event is prevented) and reset it.
              * This is called when the user taps the "cancel" button
              */
             cancel() {
@@ -437,7 +482,7 @@
                 if(stepIndex < 0 || this.steps.length <= stepIndex)
                 {
                     // invalid index
-                    throw new RangeError('invalid wizzard step provided: ' + index);
+                    throw new RangeError('invalid wizard step provided: ' + index);
                 }
 
                 return this.steps[stepIndex].state;
@@ -470,7 +515,7 @@
                 if(index < 0 || this.steps.length <= index)
                 {
                     // invalid index
-                    throw new RangeError('invalid wizzard step provided: ' + index);
+                    throw new RangeError('invalid wizard step provided: ' + index);
                 }
 
                 if(this.steps[index].disabled)
@@ -582,6 +627,11 @@
              * internal helpers
              */
 
+            /**
+             * called when we requested the users consent to clear states (to return to previous steps) and
+             * the user consented by saying "ok".
+             * Clears all states required to return to the previously requested step
+             */
             _clearPendingStates() {
                 if(Array.isArray(this._pendingStateClears))
                 {
@@ -597,6 +647,9 @@
                 }
             }
 
+            /**
+             * called when the window is resized. Handles the layout of the bottom toolbar containing the progress and actions
+             */
             _onResize() {
                 this.$.actions.classList.remove('two-line');
                 if(this.$.actions.clientHeight > 85)
@@ -605,6 +658,9 @@
                 }
             }
 
+            /**
+             * called when the user navigates to certain steps directly by using the progress bar
+             */
             _jumpToState(e) {
                 if(this._canJumpToStep(e.model.index) && e.model.index !== this.currentStep)
                 {
@@ -618,6 +674,13 @@
              * template helpers
              */
 
+            /**
+             * determines if we can go back (have a step before the current one that is not disabled)
+             *
+             * @param {Number} currentStep
+             * @returns {boolean}
+             * @private
+             */
             _canGoBack(currentStep) {
                 if(!this.steps)
                 {
@@ -634,6 +697,15 @@
                 return false;
             }
 
+            /**
+             * checks if we can jump to the given step:
+             * - target step is not disabled
+             * - no step that depends on previous step in between
+             *
+             * @param {Number} index
+             * @returns {boolean}
+             * @private
+             */
             _canJumpToStep(index) {
                 if(index < this.currentStep) {
                     return !this.steps[index].disabled;
@@ -655,6 +727,13 @@
                 return true;
             }
 
+            /**
+             * returns the label of the given step
+             *
+             * @param {Number} index
+             * @returns {String}
+             * @private
+             */
             _getStepLabel(index) {
                 try {
                     return this.steps[index].label;
@@ -663,28 +742,58 @@
                 }
             }
 
+            /**
+             * returns the label for the "next" button depending on the current step
+             *
+             * @param {Number} currentStep
+             * @returns {String}
+             * @private
+             */
             _getNextStepButtonLabel(currentStep) {
                 if(this.steps && currentStep === this.steps.length - 1)
                 {
-                    return 'Abschließen';
+                    return this.finishLabel;
                 }
 
-                return 'Weiter';
+                return this.continueLabel;
             }
-
+            
+            /**
+             * converts a step index to the "humand readable" step number
+             *
+             * @param {Number} index
+             * @returns {Number}
+             * @private
+             */
             _getStepNumberFromIndex(index) {
                 return index + 1;
             }
 
+            /**
+             * checks if the given step is active
+             *
+             * @param {Number} index
+             * @param {Number} currentStep
+             * @returns {boolean}
+             * @private
+             */
             _isStepActive(index, currentStep) {
                 return currentStep === index;
             }
 
+            /**
+             * checks if the given step is finished (if we're further than it)
+             *
+             * @param {Number} index
+             * @param {Number} currentStep
+             * @returns {boolean}
+             * @private
+             */
             _isStepDone(index, currentStep) {
                 return currentStep > index;
             }
         }
 
-        customElements.define(ActindoWizzard.is, ActindoWizzard);
+        customElements.define(ActindoWizard.is, ActindoWizard);
     </script>
 </dom-module>

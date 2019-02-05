@@ -4,7 +4,7 @@
     {
       "description": "",
       "summary": "",
-      "path": "actindo-wizzard-step.html",
+      "path": "actindo-wizard-step.html",
       "properties": [
         {
           "name": "disabled",
@@ -13,11 +13,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 28,
+              "line": 36,
               "column": 20
             },
             "end": {
-              "line": 31,
+              "line": 39,
               "column": 21
             }
           },
@@ -33,11 +33,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 38,
+              "line": 46,
               "column": 20
             },
             "end": {
-              "line": 40,
+              "line": 48,
               "column": 21
             }
           },
@@ -52,11 +52,31 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 48,
+              "line": 56,
               "column": 20
             },
             "end": {
-              "line": 51,
+              "line": 59,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
+        {
+          "name": "framed",
+          "type": "boolean",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 64,
+              "column": 20
+            },
+            "end": {
+              "line": 68,
               "column": 21
             }
           },
@@ -72,11 +92,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 62,
+              "line": 79,
               "column": 20
             },
             "end": {
-              "line": 65,
+              "line": 82,
               "column": 21
             }
           },
@@ -94,11 +114,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 69,
+              "line": 86,
               "column": 12
             },
             "end": {
-              "line": 71,
+              "line": 88,
               "column": 13
             }
           },
@@ -111,11 +131,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 18,
+          "line": 26,
           "column": 8
         },
         "end": {
-          "line": 72,
+          "line": 89,
           "column": 9
         }
       },
@@ -128,11 +148,11 @@
           "description": "indicates if this step is disabled. Disabled step's cannot be selected.",
           "sourceRange": {
             "start": {
-              "line": 28,
+              "line": 36,
               "column": 20
             },
             "end": {
-              "line": 31,
+              "line": 39,
               "column": 21
             }
           },
@@ -144,11 +164,11 @@
           "description": "the label of this step",
           "sourceRange": {
             "start": {
-              "line": 38,
+              "line": 46,
               "column": 20
             },
             "end": {
-              "line": 40,
+              "line": 48,
               "column": 21
             }
           },
@@ -160,11 +180,27 @@
           "description": "If this is the case, this steps state will be cleared (reset to an empty object) if the user\ndecides to jump to any step BEFORE this one (NOT if the user jumps to THIS step)",
           "sourceRange": {
             "start": {
-              "line": 48,
+              "line": 56,
               "column": 20
             },
             "end": {
-              "line": 51,
+              "line": 59,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
+        {
+          "name": "framed",
+          "description": "",
+          "sourceRange": {
+            "start": {
+              "line": 64,
+              "column": 20
+            },
+            "end": {
+              "line": 68,
               "column": 21
             }
           },
@@ -176,11 +212,11 @@
           "description": "the state data of this step. May be reset to an empty object from the wizzard if the user decides\nto jump back some steps which may invalidate the states in between.\nThis is also explicitely set to an empty object when the wizzard is initialising or reset",
           "sourceRange": {
             "start": {
-              "line": 62,
+              "line": 79,
               "column": 20
             },
             "end": {
-              "line": 65,
+              "line": 82,
               "column": 21
             }
           },
@@ -205,25 +241,45 @@
           "description": "",
           "name": "",
           "range": {
-            "file": "actindo-wizzard-step.html",
+            "file": "actindo-wizard-step.html",
             "start": {
-              "line": 14,
-              "column": 8
+              "line": 21,
+              "column": 12
             },
             "end": {
-              "line": 14,
-              "column": 21
+              "line": 21,
+              "column": 25
             }
           }
         }
       ],
-      "tagname": "actindo-wizzard-step"
+      "tagname": "actindo-wizard-step"
     },
     {
-      "description": "# actindo-wizzard\n`<actindo-wizzard>` implements an abstract application wizzard that guides users through a process\nof multiple steps. The content of the steps is up to you. The wizzard takes care of the surrounding optics\nand the state handling.\n\n## Basic Usage\n```\n<actindo-wizzard>\n    <actindo-wizzard-step label=\"Select type\" state=\"{{s1}}\"><your-type-select state=\"{{s1}}\"></your-type-select></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"Configure source\" depends-on-previous-step state=\"{{s2}}\"><your-source-configure state=\"{{s2}}\"></your-source-configure></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"select data\" state=\"{{s3}}\"><your-select-data state=\"{{s3}}\"></your-select-data></actindo-wizzard-step>\n    <actindo-wizzard-step label=\"Confirm import\" depends-on-previous-step data=\"{{s4}}\"><your-confirm-import data=\"{{s4}}\"></your-confirm-import></actindo-wizzard-step>\n</actindo-wizzard>\n```\n\n## Styline\n`<actindo-wizzard>` exposes the following variables for styling\n```\nvariable             |  default             | description\n---------------------|----------------------|---------------\n--highlight-color    | --primary-color      | colors of active points of the pagination\n--decent-color       | --primary-text-color | colors of disabled points of the pagination\n```",
+      "description": "# actindo-wizard\n`<actindo-wizard>` implements an abstract application wizard that guides users through a process\nof multiple steps. The content of the steps is up to you. The wizard takes care of the surrounding optics\nand the state handling.\n\n## Basic Usage\n```\n<actindo-wizard>\n    <actindo-wizard-step label=\"Select type\" state=\"{{s1}}\"><your-type-select state=\"{{s1}}\"></your-type-select></actindo-wizard-step>\n    <actindo-wizard-step label=\"Configure source\" depends-on-previous-step state=\"{{s2}}\"><your-source-configure state=\"{{s2}}\"></your-source-configure></actindo-wizard-step>\n    <actindo-wizard-step label=\"select data\" state=\"{{s3}}\"><your-select-data state=\"{{s3}}\"></your-select-data></actindo-wizard-step>\n    <actindo-wizard-step label=\"Confirm import\" depends-on-previous-step data=\"{{s4}}\"><your-confirm-import data=\"{{s4}}\"></your-confirm-import></actindo-wizard-step>\n</actindo-wizard>\n```\n\n## Styline\n`<actindo-wizard>` exposes the following variables for styling\n```\nvariable             |  default             | description\n---------------------|----------------------|---------------\n--highlight-color    | --primary-color      | colors of active points of the pagination\n--decent-color       | --primary-text-color | colors of disabled points of the pagination\n```",
       "summary": "",
-      "path": "actindo-wizzard.html",
+      "path": "actindo-wizard.html",
       "properties": [
+        {
+          "name": "disableCancel",
+          "type": "boolean",
+          "description": "",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 257,
+              "column": 20
+            },
+            "end": {
+              "line": 260,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "false"
+        },
         {
           "name": "askBeforeClearState",
           "type": "boolean",
@@ -231,11 +287,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 247,
+              "line": 268,
               "column": 20
             },
             "end": {
-              "line": 250,
+              "line": 271,
               "column": 21
             }
           },
@@ -251,11 +307,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 257,
+              "line": 278,
               "column": 20
             },
             "end": {
-              "line": 262,
+              "line": 283,
               "column": 21
             }
           },
@@ -268,17 +324,117 @@
           "defaultValue": "-1"
         },
         {
+          "name": "backLabel",
+          "type": "string",
+          "description": "the label of the back button (to go back to the previous step)",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 288,
+              "column": 20
+            },
+            "end": {
+              "line": 291,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"back\""
+        },
+        {
+          "name": "cancelLabel",
+          "type": "string",
+          "description": "the label of the cancel button that closes the wizard without finishing it",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 296,
+              "column": 20
+            },
+            "end": {
+              "line": 299,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"Cancel\""
+        },
+        {
+          "name": "continueLabel",
+          "type": "string",
+          "description": "the label of the continue button (to get to the next step)",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 304,
+              "column": 20
+            },
+            "end": {
+              "line": 307,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"Continue\""
+        },
+        {
+          "name": "finishLabel",
+          "type": "string",
+          "description": "the label of the continue button in the last step",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 312,
+              "column": 20
+            },
+            "end": {
+              "line": 315,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"Finalize\""
+        },
+        {
+          "name": "stepLabel",
+          "type": "string",
+          "description": "the label to show before the step number and label",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 320,
+              "column": 20
+            },
+            "end": {
+              "line": 323,
+              "column": 21
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "\"Step\""
+        },
+        {
           "name": "disableContinue",
           "type": "boolean",
           "description": "whether to disable the continue button. May be useful to force user input",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 269,
+              "line": 330,
               "column": 20
             },
             "end": {
-              "line": 273,
+              "line": 334,
               "column": 21
             }
           },
@@ -292,15 +448,15 @@
         {
           "name": "open",
           "type": "boolean",
-          "description": "indicates if the wizzard is open",
+          "description": "indicates if the wizard is open",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 280,
+              "line": 341,
               "column": 20
             },
             "end": {
-              "line": 285,
+              "line": 346,
               "column": 21
             }
           },
@@ -314,15 +470,15 @@
         {
           "name": "steps",
           "type": "[]",
-          "description": "all steps (<actindo-wizzard-step>s) contained in this wizzard",
+          "description": "all steps (<actindo-wizard-step>s) contained in this wizard",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 292,
+              "line": 353,
               "column": 20
             },
             "end": {
-              "line": 295,
+              "line": 356,
               "column": 21
             }
           },
@@ -339,11 +495,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 304,
+              "line": 365,
               "column": 20
             },
             "end": {
-              "line": 306,
+              "line": 367,
               "column": 21
             }
           },
@@ -358,11 +514,11 @@
           "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 316,
+              "line": 377,
               "column": 20
             },
             "end": {
-              "line": 318,
+              "line": 379,
               "column": 21
             }
           },
@@ -378,11 +534,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 332,
+              "line": 393,
               "column": 12
             },
             "end": {
-              "line": 349,
+              "line": 408,
               "column": 13
             }
           },
@@ -395,11 +551,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 351,
+              "line": 410,
               "column": 12
             },
             "end": {
-              "line": 353,
+              "line": 412,
               "column": 13
             }
           },
@@ -412,11 +568,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 364,
+              "line": 423,
               "column": 12
             },
             "end": {
-              "line": 373,
+              "line": 432,
               "column": 13
             }
           },
@@ -425,15 +581,15 @@
         },
         {
           "name": "cancel",
-          "description": "closes the wizzard (unless the event is prevented) and reset it.\nThis is called when the user taps the \"cancel\" button",
+          "description": "closes the wizard (unless the event is prevented) and reset it.\nThis is called when the user taps the \"cancel\" button",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 379,
+              "line": 438,
               "column": 12
             },
             "end": {
-              "line": 391,
+              "line": 450,
               "column": 13
             }
           },
@@ -446,11 +602,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 396,
+              "line": 455,
               "column": 12
             },
             "end": {
-              "line": 413,
+              "line": 472,
               "column": 13
             }
           },
@@ -463,11 +619,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 421,
+              "line": 480,
               "column": 12
             },
             "end": {
-              "line": 429,
+              "line": 488,
               "column": 13
             }
           },
@@ -489,11 +645,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 436,
+              "line": 495,
               "column": 12
             },
             "end": {
-              "line": 444,
+              "line": 503,
               "column": 13
             }
           },
@@ -509,11 +665,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 454,
+              "line": 513,
               "column": 12
             },
             "end": {
-              "line": 497,
+              "line": 577,
               "column": 13
             }
           },
@@ -537,11 +693,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 502,
+              "line": 582,
               "column": 12
             },
             "end": {
-              "line": 526,
+              "line": 606,
               "column": 13
             }
           },
@@ -554,11 +710,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 534,
+              "line": 614,
               "column": 12
             },
             "end": {
-              "line": 541,
+              "line": 621,
               "column": 13
             }
           },
@@ -578,15 +734,15 @@
         },
         {
           "name": "_clearPendingStates",
-          "description": "",
+          "description": "called when we requested the users consent to clear states (to return to previous steps) and\nthe user consented by saying \"ok\".\nClears all states required to return to the previously requested step",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 549,
+              "line": 634,
               "column": 12
             },
             "end": {
-              "line": 562,
+              "line": 647,
               "column": 13
             }
           },
@@ -595,15 +751,15 @@
         },
         {
           "name": "_onResize",
-          "description": "",
+          "description": "called when the window is resized. Handles the layout of the bottom toolbar containing the progress and actions",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 564,
+              "line": 652,
               "column": 12
             },
             "end": {
-              "line": 570,
+              "line": 658,
               "column": 13
             }
           },
@@ -612,15 +768,15 @@
         },
         {
           "name": "_jumpToState",
-          "description": "",
+          "description": "called when the user navigates to certain steps directly by using the progress bar",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 572,
+              "line": 663,
               "column": 12
             },
             "end": {
-              "line": 577,
+              "line": 668,
               "column": 13
             }
           },
@@ -633,156 +789,186 @@
         },
         {
           "name": "_canGoBack",
-          "description": "",
-          "privacy": "protected",
+          "description": "determines if we can go back (have a step before the current one that is not disabled)",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 585,
+              "line": 683,
               "column": 12
             },
             "end": {
-              "line": 599,
+              "line": 697,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "currentStep"
+              "name": "currentStep",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "boolean"
+          }
         },
         {
           "name": "_canJumpToStep",
-          "description": "",
-          "privacy": "protected",
+          "description": "checks if we can jump to the given step:\n- target step is not disabled\n- no step that depends on previous step in between",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 601,
+              "line": 708,
               "column": 12
             },
             "end": {
-              "line": 620,
+              "line": 727,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "index"
+              "name": "index",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "boolean"
+          }
         },
         {
           "name": "_getStepLabel",
-          "description": "",
-          "privacy": "protected",
+          "description": "returns the label of the given step",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 622,
+              "line": 736,
               "column": 12
             },
             "end": {
-              "line": 628,
+              "line": 742,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "index"
+              "name": "index",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "String"
+          }
         },
         {
           "name": "_getNextStepButtonLabel",
-          "description": "",
-          "privacy": "protected",
+          "description": "returns the label for the \"next\" button depending on the current step",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 630,
+              "line": 751,
               "column": 12
             },
             "end": {
-              "line": 637,
+              "line": 758,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "currentStep"
+              "name": "currentStep",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "String"
+          }
         },
         {
           "name": "_getStepNumberFromIndex",
-          "description": "",
-          "privacy": "protected",
+          "description": "converts a step index to the \"humand readable\" step number",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 639,
+              "line": 767,
               "column": 12
             },
             "end": {
-              "line": 641,
+              "line": 769,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "index"
+              "name": "index",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "Number"
+          }
         },
         {
           "name": "_isStepActive",
-          "description": "",
-          "privacy": "protected",
+          "description": "checks if the given step is active",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 643,
+              "line": 779,
               "column": 12
             },
             "end": {
-              "line": 645,
+              "line": 781,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "index"
+              "name": "index",
+              "type": "Number"
             },
             {
-              "name": "currentStep"
+              "name": "currentStep",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "boolean"
+          }
         },
         {
           "name": "_isStepDone",
-          "description": "",
-          "privacy": "protected",
+          "description": "checks if the given step is finished (if we're further than it)",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 647,
+              "line": 791,
               "column": 12
             },
             "end": {
-              "line": 649,
+              "line": 793,
               "column": 13
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "index"
+              "name": "index",
+              "type": "Number"
             },
             {
-              "name": "currentStep"
+              "name": "currentStep",
+              "type": "Number"
             }
-          ]
+          ],
+          "return": {
+            "type": "boolean"
+          }
         }
       ],
       "staticMethods": [],
@@ -790,28 +976,44 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 236,
+          "line": 252,
           "column": 8
         },
         "end": {
-          "line": 650,
+          "line": 794,
           "column": 9
         }
       },
       "privacy": "public",
       "superclass": "HTMLElement",
-      "name": "ActindoWizzard",
+      "name": "ActindoWizard",
       "attributes": [
+        {
+          "name": "disable-cancel",
+          "description": "",
+          "sourceRange": {
+            "start": {
+              "line": 257,
+              "column": 20
+            },
+            "end": {
+              "line": 260,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "boolean"
+        },
         {
           "name": "ask-before-clear-state",
           "description": "if we jump back to previous steps which would result in step states being cleared, should we\nhave the user confirm this before actually doing it?",
           "sourceRange": {
             "start": {
-              "line": 247,
+              "line": 268,
               "column": 20
             },
             "end": {
-              "line": 250,
+              "line": 271,
               "column": 21
             }
           },
@@ -823,11 +1025,11 @@
           "description": "contains the currently active step",
           "sourceRange": {
             "start": {
-              "line": 257,
+              "line": 278,
               "column": 20
             },
             "end": {
-              "line": 262,
+              "line": 283,
               "column": 21
             }
           },
@@ -835,15 +1037,95 @@
           "type": "number"
         },
         {
+          "name": "back-label",
+          "description": "the label of the back button (to go back to the previous step)",
+          "sourceRange": {
+            "start": {
+              "line": 288,
+              "column": 20
+            },
+            "end": {
+              "line": 291,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "cancel-label",
+          "description": "the label of the cancel button that closes the wizard without finishing it",
+          "sourceRange": {
+            "start": {
+              "line": 296,
+              "column": 20
+            },
+            "end": {
+              "line": 299,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "continue-label",
+          "description": "the label of the continue button (to get to the next step)",
+          "sourceRange": {
+            "start": {
+              "line": 304,
+              "column": 20
+            },
+            "end": {
+              "line": 307,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "finish-label",
+          "description": "the label of the continue button in the last step",
+          "sourceRange": {
+            "start": {
+              "line": 312,
+              "column": 20
+            },
+            "end": {
+              "line": 315,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
+          "name": "step-label",
+          "description": "the label to show before the step number and label",
+          "sourceRange": {
+            "start": {
+              "line": 320,
+              "column": 20
+            },
+            "end": {
+              "line": 323,
+              "column": 21
+            }
+          },
+          "metadata": {},
+          "type": "string"
+        },
+        {
           "name": "disable-continue",
           "description": "whether to disable the continue button. May be useful to force user input",
           "sourceRange": {
             "start": {
-              "line": 269,
+              "line": 330,
               "column": 20
             },
             "end": {
-              "line": 273,
+              "line": 334,
               "column": 21
             }
           },
@@ -852,14 +1134,14 @@
         },
         {
           "name": "open",
-          "description": "indicates if the wizzard is open",
+          "description": "indicates if the wizard is open",
           "sourceRange": {
             "start": {
-              "line": 280,
+              "line": 341,
               "column": 20
             },
             "end": {
-              "line": 285,
+              "line": 346,
               "column": 21
             }
           },
@@ -868,14 +1150,14 @@
         },
         {
           "name": "steps",
-          "description": "all steps (<actindo-wizzard-step>s) contained in this wizzard",
+          "description": "all steps (<actindo-wizard-step>s) contained in this wizard",
           "sourceRange": {
             "start": {
-              "line": 292,
+              "line": 353,
               "column": 20
             },
             "end": {
-              "line": 295,
+              "line": 356,
               "column": 21
             }
           },
@@ -887,13 +1169,13 @@
         {
           "type": "CustomEvent",
           "name": "cancel",
-          "description": "cancel Fired when `actindo-wizzard` is canceled",
+          "description": "cancel Fired when `actindo-wizard` is canceled",
           "metadata": {}
         },
         {
           "type": "CustomEvent",
           "name": "finished",
-          "description": "finished Fired when `actindo-wizzard` is finished (all steps done)",
+          "description": "finished Fired when `actindo-wizard` is finished (all steps done)",
           "metadata": {}
         },
         {
@@ -924,19 +1206,19 @@
           "description": "",
           "name": "",
           "range": {
-            "file": "actindo-wizzard.html",
+            "file": "actindo-wizard.html",
             "start": {
-              "line": 167,
+              "line": 183,
               "column": 16
             },
             "end": {
-              "line": 167,
+              "line": 183,
               "column": 29
             }
           }
         }
       ],
-      "tagname": "actindo-wizzard"
+      "tagname": "actindo-wizard"
     }
   ]
 }
