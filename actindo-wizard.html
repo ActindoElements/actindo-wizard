@@ -3,13 +3,12 @@
 <link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/iron-pages/iron-pages.html">
 
-<link rel="import" href="./actindo-wizzard-step.html">
+<link rel="import" href="./actindo-wizard-step.html">
 
-<dom-module id="actindo-wizzard">
+<dom-module id="actindo-wizard">
     <template>
         <style>
             :host {
-                background: rgba(0, 0, 0, 0.5);
                 bottom: 0;
                 display: none;
                 left: 0;
@@ -21,14 +20,29 @@
                 --decent-color: var(--primary-text-color);
             }
 
+            #backdrop {
+                background: rgba(0, 0, 0, 0.5);
+                bottom: 0;
+                left: 0;
+                position: fixed;
+                right: 0;
+                top: 0;
+                z-index: 101;
+            }
+
             :host([open]) {
                 display: block;
             }
 
             paper-card {
                 display: block;
-                margin: 2em;
-                padding: 0.5em;
+                margin: 1em;
+                position: relative;
+                z-index: 1000002;
+            }
+
+            iron-pages {
+                margin: 1.75em 2em 0 2em;
             }
 
             .actions {
@@ -105,7 +119,8 @@
             }
 
             #actions {
-                margin-top: 1em;
+                align-items: center;
+                padding: 1em 2em;
             }
 
             #actions.two-line {
@@ -142,7 +157,7 @@
                 background: var(--highlight-color);
             }
 
-            #continueButton {
+            #continueButton:not([disabled]) {
                 @apply(--paper-save-button);
             }
 
@@ -157,18 +172,19 @@
             #confirmStateClearDialog paper-button[dialog-confirm] {
                 @apply(--paper-save-button);
             }
-            #back paper-button[hidden] {
-                display: inline-block !important;
-                opacity: 0;
+            #back .hidden-true {
+                transform: translateX(-100vw);
             }
         </style>
+
+        <div id="backdrop"></div>
 
         <paper-card>
             <iron-pages selected="[[currentStep]]">
                 <slot></slot>
             </iron-pages>
             <div class="actions" id="actions">
-                <div id="back"><paper-button on-tap="back" hidden="[[!_canGoBack(currentStep)]]">Zurück</paper-button></div>
+                <div id="back"><paper-button on-tap="back" class$="hidden-[[!_canGoBack(currentStep)]]"><iron-icon icon="chevron-left"></iron-icon>Zurück</paper-button></div>
                 <div id="steps">
                     <ul>
                         <template is="dom-repeat" items="[[steps]]" observe="disabled">
@@ -235,7 +251,7 @@
          * @polymer
          */
         class ActindoWizzard extends Polymer.Element {
-            static get is() { return 'actindo-wizzard'; }
+            static get is() { return 'actindo-wizard'; }
 
             static get properties() {
                 return {
@@ -345,8 +361,6 @@
                 };
                 window.addEventListener('resize', this._resizeDebounceHandler);
                 this._onResize();
-
-                console.log(this.steps);
             }
 
             disconnectedCallback() {
@@ -399,7 +413,7 @@
                 {
                     if(this.steps[i].disabled !== true)
                     {
-                        this._setCurrentStep(i, false);
+                        this.goToStep(i);
                         return;
                     }
                 }
@@ -494,7 +508,28 @@
                     return;
                 }
 
+                if(this.currentStep > -1)
+                {
+                    let leaveEvent = new CustomEvent('leave', {
+                        cancelable: true,
+                        detail: {
+                            state: this.getState(this.currentStep)
+                        }
+                    });
+                    this.steps[this.currentStep].dispatchEvent(leaveEvent);
+
+                    if(leaveEvent.defaultPrevented)
+                    {
+                        return;
+                    }
+                }
+
                 this._setCurrentStep(index);
+
+                if(index > -1)
+                {
+                    this.steps[index].dispatchEvent(new CustomEvent('enter', {detail: {}}));
+                }
             }
 
             /**
@@ -509,14 +544,14 @@
                             if(step.nodeType !== Node.ELEMENT_NODE) {
                                 return false;
                             }
-                            if(step.tagName.toLowerCase() !== 'actindo-wizzard-step')
+                            if(step.tagName.toLowerCase() !== 'actindo-wizard-step')
                             {
-                                console.warn('Only instances of <actindo-wizzard-step> may be put into <actindo-wizzard>, removing element', step);
+                                console.warn('Only instances of <actindo-wizard-step> may be put into <actindo-wizard>, removing element', step);
                                 step.parentElement.removeChild(step);
                                 return false;
                             }
-
                             step.clearState();
+
                             return true;
                         })
                 );
@@ -564,7 +599,7 @@
 
             _onResize() {
                 this.$.actions.classList.remove('two-line');
-                if(this.$.actions.clientHeight > 60)
+                if(this.$.actions.clientHeight > 85)
                 {
                     this.$.actions.classList.add('two-line');
                 }
