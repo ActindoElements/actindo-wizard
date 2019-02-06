@@ -1,7 +1,7 @@
-<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-button/paper-button.html">
-<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-card/paper-card.html">
-<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="/Actindo/CoreModules/Start/Resources/app/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
 
 <link rel="import" href="./actindo-wizard-step.html">
 
@@ -189,36 +189,34 @@
                     <ul>
                         <template is="dom-repeat" items="[[steps]]" observe="disabled">
                             <li class$="step done-[[_isStepDone(index, currentStep)]] active-[[_isStepActive(index, currentStep)]] disabled-[[item.disabled]] jump-[[_canJumpToStep(index, currentStep)]]"
-                                title$="Schritt [[_getStepNumberFromIndex(index)]]: [[item.label]]"
+                                title$="[[stepLabel]] [[_getStepNumberFromIndex(index)]]: [[item.label]]"
                                 on-tap="_jumpToState">
                                 <paper-ripple center noink="[[!_canJumpToStep(index, currentStep)]]"></paper-ripple>
                             </li>
                         </template>
                     </ul>
-                    <p><strong>Schritt [[_getStepNumberFromIndex(currentStep)]]:</strong> [[_getStepLabel(currentStep)]]</p>
+                    <p><strong>[[stepLabel]] [[_getStepNumberFromIndex(currentStep)]]:</strong> [[_getStepLabel(currentStep)]]</p>
                 </div>
                 <div id="for">
                     <paper-button on-tap="cancel" disabled="[[disableCancel]]">[[cancelLabel]]</paper-button>
                     <paper-button id="continueButton" raised on-tap="continue" disabled="[[disableContinue]]">[[_getNextStepButtonLabel(currentStep, continueLabel, finishLabel)]]</paper-button>
                 </div>
             </div>
+
+            <paper-dialog id="confirmStateClearDialog">
+                <p>[[confirmClearStatesMessage]]</p>
+                <ul>
+                    <template is="dom-repeat" items="[[_pendingStateClears]]">
+                        <li>[[stepLabel]] [[item.number]]: [[item.step.label]]</li>
+                    </template>
+                </ul>
+                <div class="actions">
+                    <paper-button dialog-dismiss>[[cancelLabel]]</paper-button>
+                    <paper-button dialog-confirm autofocus on-tap="_clearPendingStates">[[okLabel]]</paper-button>
+                </div>
+            </paper-dialog>
         </paper-card>
 
-        <paper-dialog id="confirmStateClearDialog">
-            <p>
-                Um zu diesem Schritt zurück zu kehren, werden die Daten folgender Schritte wieder zurückgesetzt und müssen
-                neu konfiguriert werden:
-            </p>
-            <ul>
-                <template is="dom-repeat" items="[[_pendingStateClears]]">
-                    <li>[[stepLabel]] [[item.number]]: [[item.step.label]]</li>
-                </template>
-            </ul>
-            <div class="actions">
-                <paper-button dialog-dismiss>Abbrechen</paper-button>
-                <paper-button dialog-confirm autofocus on-tap="_clearPendingStates">OK</paper-button>
-            </div>
-        </paper-dialog>
     </template>
 
     <script>
@@ -255,6 +253,9 @@
 
             static get properties() {
                 return {
+                    /**
+                     * if the cancel button should be disabled
+                     */
                     disableCancel: {
                         type: Boolean,
                         value: false
@@ -324,6 +325,14 @@
                     },
 
                     /**
+                     * the label on the "confirm step change" button (in the dialog)
+                     */
+                    okLabel: {
+                        type: String,
+                        value: 'OK'
+                    },
+
+                    /**
                      * whether to disable the continue button. May be useful to force user input
                      *
                      * @param {Boolean}
@@ -332,6 +341,14 @@
                         type: Boolean,
                         value: false,
                         notify: true
+                    },
+
+                    /**
+                     * the message to display to the user when he needs to confirm clearing step states to go back to a previous step
+                     */
+                    confirmClearStatesMessage: {
+                        type: String,
+                        value: 'To go back to this step, the data of the following steps will be cleared and will have to be reconfigured:'
                     },
 
                     /**
@@ -728,6 +745,22 @@
             }
 
             /**
+             * returns the label for the "next" button depending on the current step
+             *
+             * @param {Number} currentStep
+             * @returns {String}
+             * @private
+             */
+            _getNextStepButtonLabel(currentStep) {
+                if(this.steps && currentStep === this.steps.length - 1)
+                {
+                    return this.finishLabel;
+                }
+
+                return this.continueLabel;
+            }
+
+            /**
              * returns the label of the given step
              *
              * @param {Number} index
@@ -743,23 +776,7 @@
             }
 
             /**
-             * returns the label for the "next" button depending on the current step
-             *
-             * @param {Number} currentStep
-             * @returns {String}
-             * @private
-             */
-            _getNextStepButtonLabel(currentStep) {
-                if(this.steps && currentStep === this.steps.length - 1)
-                {
-                    return this.finishLabel;
-                }
-
-                return this.continueLabel;
-            }
-            
-            /**
-             * converts a step index to the "humand readable" step number
+             * converts a step index to the "human readable" step number
              *
              * @param {Number} index
              * @returns {Number}
