@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "elements": [
     {
-      "description": "",
+      "description": "# actindo-wizard-step\n`<actindo-wizard-step>` implements a single step of a wizard and is supposed to contained in an <actindo-wizard>\n\n## Styline\n`<actindo-wizard-step>` exposes the following variables for styling\n```\nvariable               |  default               | description\n-----------------------|------------------------|---------------\n--framed-border-color  | --actindo-border-light | the color of the frame border if the `framed` property is true\n```",
       "summary": "",
       "path": "actindo-wizard-step.html",
       "properties": [
@@ -13,11 +13,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 36,
+              "line": 52,
               "column": 20
             },
             "end": {
-              "line": 39,
+              "line": 55,
               "column": 21
             }
           },
@@ -33,11 +33,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 46,
+              "line": 62,
               "column": 20
             },
             "end": {
-              "line": 48,
+              "line": 64,
               "column": 21
             }
           },
@@ -52,11 +52,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 56,
+              "line": 72,
               "column": 20
             },
             "end": {
-              "line": 59,
+              "line": 75,
               "column": 21
             }
           },
@@ -68,15 +68,15 @@
         {
           "name": "framed",
           "type": "boolean",
-          "description": "",
+          "description": "changes the style of this component to its slotted content has a border. Userful for complex embedded layouts",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 64,
+              "line": 81,
               "column": 20
             },
             "end": {
-              "line": 68,
+              "line": 85,
               "column": 21
             }
           },
@@ -87,16 +87,16 @@
         },
         {
           "name": "state",
-          "type": "{}",
+          "type": "Object",
           "description": "the state data of this step. May be reset to an empty object from the wizzard if the user decides\nto jump back some steps which may invalidate the states in between.\nThis is also explicitely set to an empty object when the wizzard is initialising or reset",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 79,
+              "line": 96,
               "column": 20
             },
             "end": {
-              "line": 82,
+              "line": 99,
               "column": 21
             }
           },
@@ -114,11 +114,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 86,
+              "line": 112,
               "column": 12
             },
             "end": {
-              "line": 88,
+              "line": 114,
               "column": 13
             }
           },
@@ -131,11 +131,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 26,
+          "line": 42,
           "column": 8
         },
         "end": {
-          "line": 89,
+          "line": 115,
           "column": 9
         }
       },
@@ -148,11 +148,11 @@
           "description": "indicates if this step is disabled. Disabled step's cannot be selected.",
           "sourceRange": {
             "start": {
-              "line": 36,
+              "line": 52,
               "column": 20
             },
             "end": {
-              "line": 39,
+              "line": 55,
               "column": 21
             }
           },
@@ -164,11 +164,11 @@
           "description": "the label of this step",
           "sourceRange": {
             "start": {
-              "line": 46,
+              "line": 62,
               "column": 20
             },
             "end": {
-              "line": 48,
+              "line": 64,
               "column": 21
             }
           },
@@ -180,11 +180,11 @@
           "description": "If this is the case, this steps state will be cleared (reset to an empty object) if the user\ndecides to jump to any step BEFORE this one (NOT if the user jumps to THIS step)",
           "sourceRange": {
             "start": {
-              "line": 56,
+              "line": 72,
               "column": 20
             },
             "end": {
-              "line": 59,
+              "line": 75,
               "column": 21
             }
           },
@@ -193,14 +193,14 @@
         },
         {
           "name": "framed",
-          "description": "",
+          "description": "changes the style of this component to its slotted content has a border. Userful for complex embedded layouts",
           "sourceRange": {
             "start": {
-              "line": 64,
+              "line": 81,
               "column": 20
             },
             "end": {
-              "line": 68,
+              "line": 85,
               "column": 21
             }
           },
@@ -212,19 +212,31 @@
           "description": "the state data of this step. May be reset to an empty object from the wizzard if the user decides\nto jump back some steps which may invalidate the states in between.\nThis is also explicitely set to an empty object when the wizzard is initialising or reset",
           "sourceRange": {
             "start": {
-              "line": 79,
+              "line": 96,
               "column": 20
             },
             "end": {
-              "line": 82,
+              "line": 99,
               "column": 21
             }
           },
           "metadata": {},
-          "type": "{}"
+          "type": "Object"
         }
       ],
       "events": [
+        {
+          "type": "CustomEvent",
+          "name": "enter",
+          "description": "enter Fired when the user enters this step",
+          "metadata": {}
+        },
+        {
+          "type": "CustomEvent",
+          "name": "leave",
+          "description": "leave Fired when the user leaves this step. Cancelable to prevent the user from leaving",
+          "metadata": {}
+        },
         {
           "type": "CustomEvent",
           "name": "state-changed",
@@ -243,11 +255,11 @@
           "range": {
             "file": "actindo-wizard-step.html",
             "start": {
-              "line": 21,
+              "line": 22,
               "column": 12
             },
             "end": {
-              "line": 21,
+              "line": 22,
               "column": 25
             }
           }

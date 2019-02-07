@@ -3,6 +3,7 @@
         <style>
             :host {
                 display: block;
+                --framed-border-color: var(--actindo-border-light);
             }
 
             strong {
@@ -24,6 +25,21 @@
     </template>
 
     <script>
+        /**
+         * # actindo-wizard-step
+         * `<actindo-wizard-step>` implements a single step of a wizard and is supposed to contained in an <actindo-wizard>
+         *
+         * ## Styline
+         * `<actindo-wizard-step>` exposes the following variables for styling
+         * ```
+         * variable               |  default               | description
+         * -----------------------|------------------------|---------------
+         * --framed-border-color  | --actindo-border-light | the color of the frame border if the `framed` property is true
+         *```
+         *
+         * @customElement
+         * @polymer
+         */
         class ActindoWizzardStep extends Polymer.Element {
             static get is() { return 'actindo-wizard-step'; }
 
@@ -60,7 +76,8 @@
                     },
 
                     /**
-                     * @type Boolean
+                     * changes the style of this component to its slotted content has a border. Userful for complex embedded layouts
+                     * @type {Boolean}
                      */
                     framed: {
                         type: Boolean,
@@ -75,12 +92,21 @@
                      *
                      * @see dependsOnPreviousStep
                      *
-                     * @type {{}}
+                     * @type {Object}
                      */
                     state: {
                         type: Object,
                         notify: true
                     }
+
+                    /**
+                     * @event enter Fired when the user enters this step
+                     */
+
+                    /**
+                     * @event leave Fired when the user leaves this step. Cancelable to prevent the user from leaving
+                     * @param {{}}} the state of the step that is being left
+                     */
                 };
             }
 
