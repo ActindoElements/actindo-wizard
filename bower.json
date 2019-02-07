@@ -1,12 +1,13 @@
 {
-    "name": "actindo-wizzard",
-    "version": "0.9.1",
+    "name": "actindo-wizard",
+    "version": "1.0.0",
     "description": "A generic component to create multi step wizzards",
     "license": "Apache-2.0",
-    "main": "actindo-wizzard.html",
+    "main": "actindo-wizard.html",
     "keywords": [
         "polymer",
-        "web-components"
+        "web-components",
+        "wizard"
     ],
     "ignore": [
         "**/.*",
@@ -17,6 +18,7 @@
         "paper-button": "^2.0.0",
         "paper-card": "^2.0.0",
         "paper-dialog": "^2.0.0",
+        "paper-ripple": "^2.0.0",
         "iron-pages": "^2.0.0"
     }
 }
