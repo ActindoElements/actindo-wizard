@@ -475,7 +475,7 @@
                 {
                     if(this.steps[i].disabled !== true)
                     {
-                        this.goToStep(i);
+                        this.goToStep(i, false, true);
                         return;
                     }
                 }
@@ -527,8 +527,9 @@
              *
              * @param {Number} index the index of the step to jump to
              * @param {Boolean} userConsent if we have the users confirmation to clear states when jumping back and clearing states in the process
+             * @param {Boolean} continueClicked true if the user clicked on the continue button
              */
-            goToStep(index, userConsent) {
+            goToStep(index, userConsent, continueClicked) {
                 if(index < 0 || this.steps.length <= index)
                 {
                     // invalid index
@@ -575,7 +576,8 @@
                     let leaveEvent = new CustomEvent('leave', {
                         cancelable: true,
                         detail: {
-                            state: this.getState(this.currentStep)
+                            state: this.getState(this.currentStep),
+                            continueClicked: continueClicked
                         }
                     });
                     this.steps[this.currentStep].dispatchEvent(leaveEvent);
