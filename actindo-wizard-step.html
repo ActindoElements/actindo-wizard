@@ -2,15 +2,23 @@
     <template>
         <style>
             :host {
-                display: block;
+                display: flex;
+                flex-direction: column;
                 --framed-border-color: var(--actindo-border-light);
             }
 
             strong {
+                flex-shrink: 0;
                 display: block;
                 margin-bottom: 1.25em;
 
                 @apply(--font-subheader);
+            }
+
+            #content
+            {
+                flex-grow: 1;
+                min-height: 0;
             }
 
             :host([framed]) #content {
